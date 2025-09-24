@@ -151,3 +151,111 @@ SELECT DEGREES(PI()), RADIANS(180); -- 180 , 3.141592653589793
 -- MOD(숫자1, 숫자2) 또는 숫자1 % 숫자2 또는 숫자1 MOD 숫자2
 -- 숫자1을 숫자2로 나눈 나머지 값을 구함.
 SELECT MOD(157, 10), 157 % 10, 157 MOD 10; -- 7, 7, 7
+
+-- POW(숫자, 숫자2), SQRT(숫자)
+-- 거듭제곱값 및 제곱근을 구한다.
+SELECT POW(2,3), SQRT(9); -- 8 , 3
+
+-- RAND()
+-- RAND()는 0이상 1미만의 실수를 구한다.
+-- m <= 임의의 정수 < n 를구하고 싶다면 FLOOR(m + (RAND() * (n-m))을 사용하면 된다.
+SELECT RAND(), FLOOR(1 + (RAND() * (7-1)) ); -- 랜덤값
+
+-- SIGN(숫자)
+-- 숫자가 양수, 0 , 음수인지 구한다.
+SELECT SIGN(100), SIGN(0), SIGN(-100.123); -- 1 , 0 , -1
+
+-- TRUNCATE(숫자, 정수)
+-- 숫자를 소수점을 기준으로 정수위치까지 구하고 나머지는 버림.
+SELECT TRUNCATE(12345.12345, 2), TRUNCATE(12345.12345, -2); -- 12,345.12 , 12,300
+
+-- 날짜 및 시간 함수
+
+-- ADDDATE(날짜, 차이), SUBDATE(날짜, 차이)
+SELECT ADDDATE('2022-01-01', INTERVAL 31 DAY), ADDDATE('2022-01-01', INTERVAL 1 MONTH);
+SELECT SUBDATE('2022-01-01', INTERVAL 31 DAY), SUBDATE('2022-01-01', INTERVAL 1 MONTH);
+
+-- ADDTIME(날씨/시간, 시간), SUBTIME(날짜/시간, 시간)
+SELECT ADDTIME('2022-01-01 23:59:59', '1:1:1'), ADDTIME('15:00:00', '2:10:10');
+SELECT SUBTIME('2022-01-01 23:59:59', '1:1:1'), SUBTIME('15:00:00', '2:10:10');
+
+-- CURDATE(), CURTIME(), NOW(), SYSDATE()
+-- CURDATE() 현재 연-월-일
+-- CURTIME() 현재 시:분:초
+-- NOW(), SYSDATE() 현재 연-월-일 시:분:초
+
+-- YEAR(날짜), MONTH(날짜), DAY(날짜), 
+-- HOUR(시간), MINUTE(시간), SECOND(시간), MICROSECOND(시간)
+SELECT YEAR(CURDATE()), MONTH(CURRENT_DATE()), DAYOFMONTH(CURRENT_DATE); -- 2025, 9, 24
+SELECT HOUR(CURTIME()), MINUTE(CURRENT_TIME()), SECOND(CURRENT_TIME), MICROSECOND(CURRENT_TIME); -- 9, 9, 52, 0
+
+-- DATE(), TIME()
+SELECT DATE(NOW()), TIME(NOW()); -- 2025-09-24, 09:10:52
+
+-- DATEDIFF(날짜1, 날짜2), TIMEDIFF(날짜1 또는 시간1, 날짜2 또는 시간2)
+SELECT DATEDIFF('2022-01-01', NOW()), TIMEDIFF('23:23:59', '12:11:10'); -- -1362 , 11:12:49
+
+-- DAYOFWEEK(날짜), MONTHNAME(), DAYOFYEAR(날짜)
+SELECT DAYOFWEEK(CURDATE()), MONTHNAME(CURDATE()), DAYOFYEAR(CURDATE()); -- 4, September, 267
+
+-- LAST_DAY(날짜)
+-- 주어진 날짜의 마지막 날짜를 구함
+SELECT LAST_DAY('2022-02-01'); -- 2022-02-28
+
+-- MAKEDATE(연도, 정수)
+-- 연도에서 정수만큼 지난 날짜를 구함.
+SELECT MAKEDATE(2022, 32); -- 2022-02-01
+
+-- MAKETIME(시, 분, 초)
+SELECT MAKETIME(12, 11, 10); -- 12:11:10
+
+-- PERIOD_ADD(연월, 개월수), PERIOD_DIFF(연월1, 연월2)
+SELECT PERIOD_ADD(202201, 11), PERIOD_DIFF(202201, 201812); -- 202212 , 37
+
+-- QUARTER(날짜)
+SELECT QUARTER('2022-07-07'); -- 3(분기)
+
+-- TIME_TO_SEC(시간)
+-- 시간을 초 단위로 구함
+SELECT TIME_TO_SEC('12:11:10'); -- 43,870
+
+-- 시스템 정보 함수
+
+-- USER(), DATABASE()
+SELECT CURRENT_USER(), DATABASE(); -- root@localhost , sqldb
+
+-- FOUND_ROWS()
+-- 바로 앞의 select 문에서 조회된 행의 개수를 구함
+USE sqlDB;
+SELECT * FROM usertbl;
+SELECT FOUND_ROWS(); -- 10
+
+-- ROW_COUNT()
+-- 바로 앞의 INSERT, UPDATE, DELETE문에서 입력, 수정, 삭제된 행의 개수를 구함
+USE sqlDB;
+UPDATE buytbl SET price=price*2;
+SELECT ROW_COUNT();
+
+-- VERSION()
+-- 현재 MariaDB의 버전을 구함
+
+-- SLEEP(초)
+-- 쿼리의 실행을 잠깐 멈춤
+SELECT SLEEP(5);
+SELECT '5초후에 이게 보여요';
+
+-- TEXT 데이터 형식을 이용해서 데이터를 입력
+USE sqlDB;
+CREATE TABLE maxTbl (col1 LONGTEXT, col2 LONGTEXT);
+
+-- repeat() 함수 활용해서 백만개 씩 입력.
+INSERT INTO maxTbl VALUES (repeat('A', 1000000), repeat('가', 1000000));
+
+-- 입력된 값의 크기를 확인
+SELECT LENGTH(col1), LENGTH(col2) FROM maxtbl;
+
+-- 좀더 큰 값을 입력
+INSERT INTO maxtbl VALUES(repeat('A', 10000000), repeat('가', 10000000));
+-- max_allowed_packet의 최대값이 약 1천6백만 바이트(=16M)로 오류발생
+
+-- 250page
