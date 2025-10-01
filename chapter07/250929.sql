@@ -523,32 +523,38 @@ SHOW CREATE TABLE Rental;
 -- 2. SQL 문을 작성하시오.
 
 -- (1) 2020년 이후 출판된 도서를 검색하시오.
-SELECT * FROM book WHERE (pubYear >= 2020);
+SELECT * FROM book WHERE pubyear >= 2020
 
 -- (2) '홍길동' 회원이 대출한 도서 목록을 출력하시오.
-SELECT book.Title AS '도서명'
-FROM ((member 
-INNER JOIN rental 
-ON member.MemberID = rental.MemberID)
-INNER JOIN book
-ON book.bookID = rental.bookID)
-WHERE member.Name = '홍길동';
+SELECT b.title, b.author, r.rentdate, r.returndate
+FROM rental r
+JOIN member m ON r.memberid = m.memberid
+JOIN book b ON r.bookid = b.bookid
+WHERE m.name = '홍길동';
 
 -- (3) 반납하지 않은 도서를 검색하시오.
-
-SELECT book.title AS '도서명' 
-FROM rental
-INNER JOIN book
-ON rental.bookID = book.BookID
-WHERE rental.returnDate IS NULL;
+SELECT r.rentalid, m.name, b.title, r.rentdate
+FROM rental r
+JOIN member m ON r.memberid = m.memberid
+JOIN book b ON r.bookid = b.bookid
+WHERE r.returndate IS NULL;
 
 -- (4) 도서별 대출 횟수를 출력하시오.
-SELECT COUNT(*) FROM book;
+SELECT b.title, COUNT(*) AS rent_count
+FROM rental r
+JOIN book b ON r.bookid = b.bookid
+GROUP BY b.title
+ORDER BY rent_count DESC;book
 
 -- (5) 가격이 가장 비싼 도서를 출력하시오.
-SELECT MAX(price) FROM book;
+SELECT * FROM book
+WHERE price = (SELECT MAX(price) FROM book);
 
 
+-- 전체 테이블 조회
+SELECT * FROM book;
+SELECT * FROM member;
+SELECT * FROM rental;
 
 
 
