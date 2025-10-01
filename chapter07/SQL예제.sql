@@ -61,3 +61,10 @@ SELECT m.*
 FROM member m
 LEFT JOIN rental r ON m.MemberID = r.MemberID
 WHERE r.MemberID IS NULL;
+
+-- 13. 도서별 대출 횟수 조회
+SELECT b.title, COUNT(*) AS rental_count
+FROM rental r
+JOIN book b ON r.BookID = b.BookID
+GROUP BY b.title
+ORDER BY rental_count DESC;
